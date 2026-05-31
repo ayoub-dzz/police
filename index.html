@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Ma Police Manuscrite</title>
+<style>
+/* ===== RESET & BASE ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #FFF8F2;
+  color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* ===== TABS ===== */
+.tabs {
+  display: flex;
+  background: #fff;
+  border-bottom: 2px solid #EDE4D8;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.tab {
+  flex: 1;
+  padding: 10px 2px 8px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #bbb;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: color 0.15s;
+  letter-spacing: 0.01em;
+}
+.tab .ico { font-size: 1.35rem; display: block; margin-bottom: 2px; }
+.tab.on { color: #C05A20; border-bottom-color: #C05A20; }
+
+/* ===== PAGES ===== */
+.page {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 22px 16px 80px;
+}
+.page.on { display: block; }
+
+/* ===== TYPOGRAPHY ===== */
+.page-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+.page-sub { color: #999; font-size: 0.85rem; line-height: 1.55; margin-bottom: 18px; }
+
+/* ===== CARDS ===== */
+.card {
+  background: #fff;
+  border: 1.5px solid #EDE4D8;
+  border-radius: 16px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+/* ===== TIP BOX ===== */
+.tip {
+  background: #FFF3E6;
+  border-left: 4px solid #C05A20;
+  border-radius: 0 12px 12px 0;
+  padding: 12px 14px;
+  font-size: 0.83rem;
+  color: #555;
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+.tip b { color: #C05A20; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: block;
+  width: 100%;
+  padding: 15px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  margin-bottom: 10px;
+  transition: opacity 0.15s, transform 0.1s;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+.btn:active { opacity: 0.85; transform: scale(0.98); }
+.btn-orange { background: #C05A20; color: #fff; }
+.btn-outline { background: #fff; color: #C05A20; border: 2px solid #C05A20 !important; }
+.btn-green  { background: #3DAA52; color: #fff; }
+.btn-gray   { background: #eee; color: #444; }
+.btn-sm {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 9px 14px; border-radius: 10px; font-family: inherit;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; border: none;
+  transition: opacity 0.15s;
+}
+.btn-sm:active { opacity: 0.75; }
+
+/* ===== STEP BADGE ===== */
+.step-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%; background: #C05A20;
+  color: #fff; font-size: 0.7rem; font-weight: 700; margin-right: 6px;
+  flex-shrink: 0;
+}
+
+/* ===== TEMPLATE ===== */
+.tmpl-section { font-size: 0.65rem; color: #ccc; text-transform: uppercase; letter-spacing: 0.07em; margin: 12px 0 5px; }
+.tmpl-section:first-child { margin-top: 0; }
+.tmpl-row { display: flex; gap: 3px; overflow-x: auto; padding-bottom: 2px; }
+.tmpl-row::-webkit-scrollbar { display: none; }
+.tmpl-cell {
+  width: 26px; height: 34px; flex-shrink: 0;
+  border: 1px solid #e8e8e8; border-bottom: 2px solid rgba(192,90,32,0.3);
+  position: relative;
+}
+.tmpl-cell span { position: absolute; bottom: 1px; right: 1px; font-size: 0.35rem; color: #ddd; }
+
+/* ===== UPLOAD ZONE ===== */
+.upload-zone {
+  border: 2.5px dashed #D8CFC5;
+  border-radius: 18px;
+  padding: 34px 16px;
+  text-align: center;
+  cursor: pointer;
+  background: #fff;
+  margin-bottom: 14px;
+  transition: border-color 0.15s, background 0.15s;
+}
+.upload-zone:active { border-color: #C05A20; background: #FFF5EE; }
+.upload-zone .ico { font-size: 2.6rem; display: block; margin-bottom: 8px; }
+.upload-zone .ut { font-size: 1rem; font-weight: 600; margin-bottom: 3px; }
+.upload-zone .us { color: #aaa; font-size: 0.8rem; }
+
+/* ===== DETECT PAGE ===== */
+#detectSec { display: none; }
+.range-row {
+  display: flex; align-items: center; gap: 10px;
+  background: #fff; border: 1.5px solid #EDE4D8;
+  border-radius: 12px; padding: 11px 13px; margin-bottom: 12px;
+}
+.range-row label { font-size: 0.8rem; color: #888; white-space: nowrap; }
+.range-row input[type=range] { flex: 1; accent-color: #C05A20; }
+.range-val { font-size: 0.8rem; color: #C05A20; font-weight: 700; min-width: 24px; text-align: right; }
+#photoCanvas { max-width: 100%; border-radius: 12px; border: 1.5px solid #EDE4D8; display: block; margin-bottom: 12px; }
+.prog-line { text-align: center; font-size: 0.83rem; color: #888; margin-bottom: 10px; }
+.glyph-grid {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  background: #fff; border: 1.5px solid #EDE4D8;
+  border-radius: 14px; padding: 10px;
+  max-height: 190px; overflow-y: auto;
+  margin-bottom: 12px;
+}
+.gc {
+  width: 46px; height: 46px; border: 2px solid #EDE4D8;
+  border-radius: 9px; background: #fff; cursor: pointer;
+  position: relative; overflow: hidden; flex-shrink: 0;
+  transition: border-color 0.12s;
+}
+.gc:active { opacity: 0.7; }
+.gc.ok { border-color: #3DAA52; }
+.gc canvas { width: 100%; height: 100%; object-fit: contain; display: block; }
+.gc .glbl { position: absolute; bottom: 0; right: 2px; font-size: 0.42rem; font-weight: 700; color: #ccc; }
+.gc.ok .glbl { color: #3DAA52; }
+.row2 { display: flex; gap: 8px; margin-bottom: 12px; }
+.fname-row { margin-bottom: 12px; }
+.fname-row label { font-size: 0.8rem; color: #888; display: block; margin-bottom: 5px; }
+.fname-row input {
+  width: 100%; padding: 12px; border: 1.5px solid #EDE4D8;
+  border-radius: 11px; font-size: 0.95rem; font-family: inherit; outline: none;
+}
+.fname-row input:focus { border-color: #C05A20; }
+
+/* ===== MODAL ===== */
+.modal-bg {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 1000;
+  align-items: flex-end; justify-content: center;
+}
+.modal-bg.on { display: flex; }
+.modal-box {
+  background: #fff; border-radius: 22px 22px 0 0;
+  padding: 18px 14px 40px; width: 100%;
+  max-height: 78vh; overflow-y: auto;
+}
+.modal-box h3 { text-align: center; font-size: 1rem; margin-bottom: 12px; }
+#mcanvas {
+  width: 100%; max-height: 80px; object-fit: contain;
+  border: 1.5px solid #eee; border-radius: 8px;
+  background: #fff; display: block; margin-bottom: 12px;
+}
+.char-picker { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; margin-bottom: 12px; }
+.cp {
+  aspect-ratio: 1; border: 1.5px solid #eee; border-radius: 8px;
+  background: #fff; font-size: 0.78rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit; transition: all 0.1s;
+}
+.cp:active { background: #C05A20; color: #fff; border-color: #C05A20; }
+.cp.used { background: #f5f5f5; color: #ddd; border-color: #f0f0f0; }
+.cp.sel { background: #3DAA52; color: #fff; border-color: #3DAA52; }
+.modal-skip {
+  width: 100%; padding: 13px; background: #f2f2f2;
+  border: none; border-radius: 12px; font-size: 0.9rem;
+  cursor: pointer; font-family: inherit;
+}
+
+/* ===== WRITE PAGE ===== */
+.toolbar-row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  background: #fff; border: 1.5px solid #EDE4D8;
+  border-radius: 14px; padding: 11px 13px; margin-bottom: 12px;
+}
+.toolbar-row label { font-size: 0.78rem; color: #888; }
+.toolbar-row input[type=range] { accent-color: #C05A20; flex: 1; min-width: 55px; }
+.toolbar-row input[type=color] {
+  width: 34px; height: 34px; border: 1.5px solid #eee;
+  border-radius: 8px; cursor: pointer; padding: 1px;
+  background: none;
+}
+.sz-val { font-size: 0.8rem; color: #C05A20; font-weight: 700; min-width: 30px; }
+.write-wrap {
+  position: relative; background: #fff; border: 1.5px solid #EDE4D8;
+  border-radius: 16px; overflow: hidden; margin-bottom: 12px;
+}
+#writeCanvas { display: block; width: 100%; touch-action: none; }
+/* Invisible textarea sits over canvas to capture keyboard on mobile */
+#writeTA {
+  position: absolute; inset: 0; opacity: 0.001;
+  width: 100%; height: 100%; font-size: 16px; /* No iOS zoom */
+  border: none; resize: none; background: transparent;
+  cursor: text; z-index: 2;
+}
+.load-font-box {
+  border: 2px dashed #F5C0A0; border-radius: 14px; padding: 16px;
+  text-align: center; cursor: pointer; background: #FFFAF6;
+  margin-bottom: 14px; transition: border-color 0.15s;
+}
+.load-font-box:active { border-color: #C05A20; }
+.load-font-box .ico { font-size: 1.6rem; display: block; margin-bottom: 4px; }
+.load-font-box p { font-size: 0.85rem; color: #C05A20; font-weight: 600; }
+
+/* ===== PDF PAGE ===== */
+#pdfSec { display: none; }
+.page-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.page-nav-btn {
+  padding: 9px 14px; background: #eee; border: none;
+  border-radius: 9px; cursor: pointer; font-family: inherit;
+  font-size: 0.85rem; font-weight: 600;
+}
+#pginfo { flex: 1; text-align: center; font-size: 0.82rem; color: #888; }
+.pdf-canvas-wrap {
+  position: relative; border-radius: 14px; overflow: hidden;
+  margin-bottom: 12px; border: 1.5px solid #EDE4D8;
+  touch-action: none;
+}
+#pdfBase { display: block; width: 100%; }
+#pdfDraw {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  cursor: crosshair; touch-action: none;
+}
+.annot-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.annot-row input[type=text] {
+  flex: 1; padding: 12px; border: 1.5px solid #EDE4D8;
+  border-radius: 11px; font-size: 1rem; font-family: inherit; outline: none;
+}
+.annot-row input[type=text]:focus { border-color: #C05A20; }
+.annot-row .add-btn {
+  padding: 12px 16px; background: #C05A20; color: #fff;
+  border: none; border-radius: 11px; font-size: 0.9rem;
+  font-weight: 700; cursor: pointer; font-family: inherit;
+  white-space: nowrap;
+}
+.cursor-hint { font-size: 0.8rem; color: #bbb; text-align: center; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ===== TABS ===== -->
+<div class="tabs">
+  <button class="tab on" id="t1" onclick="go(1)"><span class="ico">📋</span>Modèle</button>
+  <button class="tab"    id="t2" onclick="go(2)"><span class="ico">📷</span>Photo</button>
+  <button class="tab"    id="t3" onclick="go(3)"><span class="ico">✏️</span>Écrire</button>
+  <button class="tab"    id="t4" onclick="go(4)"><span class="ico">📄</span>PDF</button>
+</div>
+
+<!-- ===== PAGE 1 · MODÈLE ===== -->
+<div class="page on" id="p1">
+  <div class="page-title">Étape 1 · Le modèle</div>
+  <div class="page-sub">Télécharge la grille, imprime-la et écris chaque lettre dans sa case</div>
+  <div class="tip">
+    <b>Ligne rouge</b> = ligne de base (comme sur un cahier)<br>
+    Écris <b>grand et lisiblement</b> · Bonne lumière · Feuille bien à plat pour la photo
+  </div>
+  <div class="card" id="tmplWrap"></div>
+  <button class="btn btn-outline" onclick="dlTemplate()">⬇️ Télécharger le modèle (PNG)</button>
+  <button class="btn btn-orange" onclick="go(2)">J'ai rempli la feuille → Étape 2</button>
+</div>
+
+<!-- ===== PAGE 2 · PHOTO ===== -->
+<div class="page" id="p2">
+  <div class="page-title">Étape 2 · Ta photo</div>
+  <div class="page-sub">Prends en photo ta feuille et importe-la — l'outil détecte les lettres automatiquement</div>
+
+  <div id="uploadSec">
+    <div class="upload-zone" onclick="document.getElementById('fIn').click()">
+      <span class="ico">📷</span>
+      <div class="ut">Appuie ici pour importer</div>
+      <div class="us">JPG ou PNG · Ta feuille remplie</div>
+    </div>
+    <input type="file" id="fIn" accept="image/*" style="display:none" onchange="handlePhoto(this)">
+  </div>
+
+  <div id="detectSec">
+    <div class="range-row">
+      <label>🎛 Sensibilité</label>
+      <input type="range" id="thrSlider" min="30" max="220" value="128"
+             oninput="thrDisplay.textContent=this.value; debounceDetect()">
+      <span class="range-val" id="thrDisplay">128</span>
+    </div>
+    <canvas id="photoCanvas"></canvas>
+    <div class="prog-line" id="progLine">0 lettre assignée</div>
+    <div class="glyph-grid" id="ggrid"></div>
+    <div class="row2">
+      <button class="btn-sm btn-gray" style="flex:1" onclick="document.getElementById('fIn').click()">📷 Autre photo</button>
+      <button class="btn-sm btn-green" style="flex:1;color:#fff" onclick="autoAssign()">✨ Tout assigner</button>
+    </div>
+    <div class="fname-row">
+      <label>Nom de ta police</label>
+      <input id="fname" value="MaPolice" placeholder="MaPolice">
+    </div>
+    <button class="btn btn-orange" onclick="exportFont()">⬇️ Télécharger ma police (.TTF)</button>
+    <button class="btn btn-outline" onclick="go(3)">✏️ Aller écrire avec ma police →</button>
+  </div>
+</div>
+
+<!-- ===== PAGE 3 · ÉCRIRE ===== -->
+<div class="page" id="p3">
+  <div class="page-title">Étape 3 · Écrire</div>
+  <div class="page-sub">Charge ton .TTF et tape ton texte dans la zone blanche</div>
+
+  <div class="load-font-box" id="loadFontBox" onclick="document.getElementById('ttfIn').click()">
+    <span class="ico">🔤</span>
+    <p>Appuie ici pour charger ton fichier .TTF</p>
+  </div>
+  <input type="file" id="ttfIn" accept=".ttf,.otf" style="display:none" onchange="loadTTF(this)">
+
+  <div class="toolbar-row">
+    <label>Taille</label>
+    <input type="range" id="wSz" min="14" max="60" value="28"
+           oninput="wSzVal.textContent=this.value+'px'; renderWrite()">
+    <span class="sz-val" id="wSzVal">28px</span>
+    <label>Couleur</label>
+    <input type="color" id="wCol" value="#1c1814" oninput="renderWrite()">
+    <div style="margin-left:auto;display:flex;gap:6px;">
+      <button class="btn-sm btn-gray" onclick="clearWrite()">🗑</button>
+      <button class="btn-sm btn-orange" style="color:#fff" onclick="saveWritePNG()">⬇️ PNG</button>
+    </div>
+  </div>
+
+  <div class="write-wrap" id="writeWrap">
+    <canvas id="writeCanvas"></canvas>
+    <textarea id="writeTA"
+      autocomplete="off" autocorrect="off" autocapitalize="off"
+      spellcheck="false" oninput="onTextInput()"></textarea>
+  </div>
+
+  <div class="tip">
+    Appuie sur la zone blanche → le clavier s'ouvre<br>
+    Tape normalement · <b>Entrée</b> = nouvelle ligne
+  </div>
+</div>
+
+<!-- ===== PAGE 4 · PDF ===== -->
+<div class="page" id="p4">
+  <div class="page-title">Étape 4 · Annoter mon PDF</div>
+  <div class="page-sub">Ouvre ton fichier, appuie où tu veux écrire, tape le texte puis valide</div>
+
+  <div id="pdfUpload">
+    <div class="upload-zone" onclick="document.getElementById('pdfIn').click()">
+      <span class="ico">📄</span>
+      <div class="ut">Appuie ici pour ouvrir ton PDF</div>
+      <div class="us">Fichier PDF de ton évaluation</div>
+    </div>
+    <input type="file" id="pdfIn" accept=".pdf,application/pdf" style="display:none" onchange="handlePDF(this)">
+
+    <div class="tip">
+      Si ton PDF ne s'ouvre pas, fais une <b>capture d'écran</b> de ta page et importe-la ci-dessous — ça marche pareil !
+    </div>
+
+    <div class="upload-zone" style="border-color:#3DAA52;border-width:2px" onclick="document.getElementById('imgPageIn').click()">
+      <span class="ico">🖼️</span>
+      <div class="ut" style="color:#3DAA52">Ou importe une image de ta page</div>
+      <div class="us">PNG ou JPG</div>
+    </div>
+    <input type="file" id="imgPageIn" accept="image/*" style="display:none" onchange="handlePageImg(this)">
+  </div>
+
+  <div id="pdfSec">
+    <div class="toolbar-row">
+      <label>Taille</label>
+      <input type="range" id="pSz" min="10" max="56" value="20"
+             oninput="pSzVal.textContent=this.value+'px'">
+      <span class="sz-val" id="pSzVal">20px</span>
+      <label>Couleur</label>
+      <input type="color" id="pCol" value="#1c1814">
+    </div>
+
+    <div class="page-nav" id="pgNav" style="display:none">
+      <button class="page-nav-btn" onclick="changePage(-1)">← Préc.</button>
+      <span id="pginfo">Page 1/1</span>
+      <button class="page-nav-btn" onclick="changePage(1)">Suiv. →</button>
+    </div>
+
+    <div class="cursor-hint" id="curHint">👆 Appuie sur la page pour placer le curseur</div>
+
+    <div class="annot-row">
+      <input type="text" id="annotInput" placeholder="Tape ton texte ici..."
+             autocorrect="off" autocapitalize="off" spellcheck="false"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();addAnnotation();}">
+      <button class="add-btn" onclick="addAnnotation()">Ajouter ✓</button>
+    </div>
+
+    <div class="pdf-canvas-wrap" id="pdfWrap">
+      <canvas id="pdfBase"></canvas>
+      <canvas id="pdfDraw" onclick="onPDFClick(event)"></canvas>
+    </div>
+
+    <button class="btn btn-orange" onclick="savePDF()">⬇️ Exporter en PNG</button>
+    <button class="btn btn-gray" onclick="undoAnnot()">↩ Annuler la dernière ligne</button>
+    <button class="btn btn-outline" onclick="resetPDF()">🔄 Ouvrir un autre fichier</button>
+  </div>
+</div>
+
+<!-- ===== MODAL ===== -->
+<div class="modal-bg" id="modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <h3>C'est quelle lettre ?</h3>
+    <canvas id="mcanvas"></canvas>
+    <div class="char-picker" id="cpicker"></div>
+    <button class="modal-skip" onclick="skipGlyph()">Passer (je ne suis pas sûr·e)</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+// ================================================================
+// NAVIGATION
+// ================================================================
+function go(n) {
+  [1,2,3,4].forEach(i => {
+    document.getElementById('p'+i).classList.toggle('on', i===n);
+    document.getElementById('t'+i).classList.toggle('on', i===n);
+  });
+  if (n === 3) initWrite();
+  if (n === 4) initPDFListeners();
+}
+
+// ================================================================
+// PAGE 1 — TEMPLATE
+// ================================================================
+const GROUPS = [
+  { name:'Majuscules',  chars:'ABCDEFGHIJKLMNOPQRSTUVWXYZ' },
+  { name:'Minuscules',  chars:'abcdefghijklmnopqrstuvwxyz' },
+  { name:'Chiffres',    chars:'0123456789' },
+  { name:'Ponctuation', chars:".,!?'-:;()" }
+];
+const ALL_CHARS = GROUPS.flatMap(g => g.chars.split(''));
+
+// Build template preview
+(function buildTplPreview() {
+  const wrap = document.getElementById('tmplWrap');
+  GROUPS.forEach(g => {
+    const sec = document.createElement('div');
+    sec.className = 'tmpl-section';
+    sec.textContent = g.name;
+    wrap.appendChild(sec);
+    const row = document.createElement('div');
+    row.className = 'tmpl-row';
+    g.chars.split('').forEach(ch => {
+      const cell = document.createElement('div');
+      cell.className = 'tmpl-cell';
+      const sp = document.createElement('span');
+      sp.textContent = ch;
+      cell.appendChild(sp);
+      row.appendChild(cell);
+    });
+    wrap.appendChild(row);
+  });
+})();
+
+function dlTemplate() {
+  const W = 794, H = 1080;
+  const tc = document.createElement('canvas');
+  tc.width = W; tc.height = H;
+  const c = tc.getContext('2d');
+  c.fillStyle = '#fff';
+  c.fillRect(0, 0, W, H);
+
+  c.fillStyle = '#222';
+  c.font = 'bold 17px serif';
+  c.fillText('Ma Police Manuscrite — Modèle', 30, 38);
+  c.fillStyle = '#aaa';
+  c.font = '9px monospace';
+  c.fillText('Écris une lettre dans chaque case · Ligne rouge = ligne de base · Photographier sur fond blanc', 30, 54);
+
+  const cW = 27, cH = 40;
+  let sY = 68;
+  GROUPS.forEach(g => {
+    c.fillStyle = '#bbb';
+    c.font = '9px sans-serif';
+    c.fillText(g.name, 30, sY + 10);
+    sY += 16;
+    g.chars.split('').forEach((ch, xi) => {
+      const x = 30 + xi * (cW + 4);
+      c.strokeStyle = '#ddd'; c.lineWidth = 0.8;
+      c.strokeRect(x, sY, cW, cH);
+      c.strokeStyle = 'rgba(192,90,32,0.4)'; c.lineWidth = 1.2;
+      c.beginPath(); c.moveTo(x, sY + cH * 0.72); c.lineTo(x + cW, sY + cH * 0.72); c.stroke();
+      c.fillStyle = '#ccc'; c.font = '7px monospace';
+      c.fillText(ch, x + cW - 9, sY + cH - 2);
+    });
+    sY += cH + 20;
+  });
+
+  tc.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'modele-police.png';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
+  }, 'image/png');
+}
+
+// ================================================================
+// PAGE 2 — PHOTO / DÉTECTION
+// ================================================================
+let photoImg = null;
+let glyphs = [];      // [{x,y,w,h, canvas, ch}]
+let assigned = {};    // {char -> glyphIndex}
+let detectTimer = null;
+
+function handlePhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      photoImg = img;
+      document.getElementById('uploadSec').style.display = 'none';
+      document.getElementById('detectSec').style.display = 'block';
+      detect();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function debounceDetect() {
+  clearTimeout(detectTimer);
+  detectTimer = setTimeout(detect, 300);
+}
+
+function detect() {
+  if (!photoImg) return;
+  const thr = parseInt(document.getElementById('thrSlider').value);
+  const pc = document.getElementById('photoCanvas');
+  const maxW = Math.min(620, window.innerWidth - 32);
+  const scale = Math.min(1, maxW / photoImg.width);
+  pc.width  = Math.round(photoImg.width  * scale);
+  pc.height = Math.round(photoImg.height * scale);
+  const ctx = pc.getContext('2d');
+  ctx.drawImage(photoImg, 0, 0, pc.width, pc.height);
+
+  const imgData = ctx.getImageData(0, 0, pc.width, pc.height);
+  const bin = binarize(imgData, thr);
+  const blobs = findBlobs(bin, pc.width, pc.height);
+
+  const minA = pc.width * pc.height * 0.00015;
+  const maxA = pc.width * pc.height * 0.10;
+  const filtered = blobs.filter(b => {
+    const a = b.w * b.h;
+    return a >= minA && a <= maxA && b.w > 3 && b.h > 4;
+  });
+
+  // Sort by row then left→right
+  const rowH = pc.height / 6;
+  filtered.sort((a, b) => {
+    const ra = Math.floor((a.y + a.h / 2) / rowH);
+    const rb = Math.floor((b.y + b.h / 2) / rowH);
+    return ra !== rb ? ra - rb : a.x - b.x;
+  });
+
+  // Keep previous assignments by index if count matches
+  const prevCh = glyphs.map(g => g.ch);
+
+  glyphs = filtered.map((b, i) => {
+    const pad = 5;
+    const gx = Math.max(0, b.x - pad);
+    const gy = Math.max(0, b.y - pad);
+    const gw = Math.min(pc.width  - gx, b.w + pad * 2);
+    const gh = Math.min(pc.height - gy, b.h + pad * 2);
+    const crop = ctx.getImageData(gx, gy, gw, gh);
+    const gc = document.createElement('canvas');
+    gc.width = gw; gc.height = gh;
+    gc.getContext('2d').putImageData(crop, 0, 0);
+    return { x: gx, y: gy, w: gw, h: gh, canvas: gc, ch: prevCh[i] || null };
+  });
+
+  assigned = {};
+  glyphs.forEach((g, i) => { if (g.ch) assigned[g.ch] = i; });
+
+  // Draw bounding boxes
+  const lw = Math.max(1, 1.5 / scale);
+  glyphs.forEach((g, i) => {
+    ctx.strokeStyle = g.ch ? '#3DAA52' : 'rgba(192,90,32,0.5)';
+    ctx.lineWidth = lw;
+    ctx.strokeRect(g.x, g.y, g.w, g.h);
+    ctx.fillStyle = g.ch ? '#3DAA52' : '#C05A20';
+    ctx.font = `${Math.max(6, 7 / scale)}px monospace`;
+    ctx.fillText(g.ch || (i + 1), g.x + 2, g.y + Math.max(8, 9 / scale));
+  });
+
+  buildGlyphGrid();
+  updateProgress();
+}
+
+function autoAssign() {
+  const order = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,!?\''.split('');
+  assigned = {};
+  glyphs.forEach((g, i) => {
+    g.ch = i < order.length ? order[i] : null;
+    if (g.ch) assigned[g.ch] = i;
+  });
+  buildGlyphGrid();
+  updateProgress();
+  detect(); // Redraw with green boxes
+}
+
+function buildGlyphGrid() {
+  const grid = document.getElementById('ggrid');
+  grid.innerHTML = '';
+  glyphs.forEach((g, i) => {
+    const cell = document.createElement('div');
+    cell.className = 'gc' + (g.ch ? ' ok' : '');
+    cell.id = 'gc' + i;
+    const mc = document.createElement('canvas');
+    mc.width = g.w; mc.height = g.h;
+    mc.getContext('2d').drawImage(g.canvas, 0, 0);
+    cell.appendChild(mc);
+    const lbl = document.createElement('span');
+    lbl.className = 'glbl';
+    lbl.textContent = g.ch || (i + 1);
+    cell.appendChild(lbl);
+    cell.addEventListener('click', () => openModal(i));
+    grid.appendChild(cell);
+  });
+}
+
+function updateProgress() {
+  const n = Object.keys(assigned).length;
+  const total = glyphs.length;
+  document.getElementById('progLine').textContent =
+    n + ' lettre' + (n > 1 ? 's' : '') + ' assignée' + (n > 1 ? 's' : '') +
+    ' sur ' + total + ' détectée' + (total > 1 ? 's' : '');
+}
+
+function refreshCell(i) {
+  const cell = document.getElementById('gc' + i);
+  if (!cell) return;
+  cell.classList.toggle('ok', !!glyphs[i].ch);
+  cell.querySelector('.glbl').textContent = glyphs[i].ch || (i + 1);
+}
+
+// Modal
+let curModal = -1;
+function openModal(i) {
+  curModal = i;
+  const g = glyphs[i];
+  const mc = document.getElementById('mcanvas');
+  mc.width = g.w; mc.height = g.h;
+  mc.style.height = '70px'; mc.style.width = '100%';
+  mc.getContext('2d').drawImage(g.canvas, 0, 0);
+  const picker = document.getElementById('cpicker');
+  picker.innerHTML = '';
+  ALL_CHARS.forEach(ch => {
+    const btn = document.createElement('button');
+    const isUsed = assigned[ch] !== undefined && assigned[ch] !== i;
+    btn.className = 'cp' + (isUsed ? ' used' : '') + (g.ch === ch ? ' sel' : '');
+    btn.textContent = ch;
+    btn.addEventListener('click', () => assignChar(ch));
+    picker.appendChild(btn);
+  });
+  document.getElementById('modal').classList.add('on');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('on');
+  curModal = -1;
+}
+function skipGlyph() {
+  if (curModal < 0) return;
+  const g = glyphs[curModal];
+  if (g.ch) { delete assigned[g.ch]; g.ch = null; }
+  refreshCell(curModal);
+  updateProgress();
+  closeModal();
+}
+function assignChar(ch) {
+  if (curModal < 0) return;
+  // Remove previous holder of this char
+  if (assigned[ch] !== undefined) {
+    glyphs[assigned[ch]].ch = null;
+    refreshCell(assigned[ch]);
+  }
+  const prev = glyphs[curModal].ch;
+  if (prev) delete assigned[prev];
+  glyphs[curModal].ch = ch;
+  assigned[ch] = curModal;
+  refreshCell(curModal);
+  updateProgress();
+  closeModal();
+}
+
+// Binarize & blob-finding
+function binarize(imgData, thr) {
+  const d = imgData.data;
+  const out = new Uint8Array(d.length / 4);
+  for (let i = 0; i < out.length; i++) {
+    out[i] = (0.299 * d[i*4] + 0.587 * d[i*4+1] + 0.114 * d[i*4+2]) < thr ? 1 : 0;
+  }
+  return out;
+}
+function findBlobs(bin, w, h) {
+  const vis = new Uint8Array(bin.length);
+  const blobs = [];
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      if (!bin[i] || vis[i]) continue;
+      const q = [i]; vis[i] = 1;
+      let x0=x, x1=x, y0=y, y1=y, qi=0;
+      while (qi < q.length) {
+        const ci = q[qi++];
+        const cx = ci % w, cy = Math.floor(ci / w);
+        if (cx < x0) x0=cx; if (cx > x1) x1=cx;
+        if (cy < y0) y0=cy; if (cy > y1) y1=cy;
+        for (const n of [ci-1,ci+1,ci-w,ci+w]) {
+          if (n >= 0 && n < bin.length && bin[n] && !vis[n]) { vis[n]=1; q.push(n); }
+        }
+      }
+      blobs.push({ x:x0, y:y0, w:x1-x0+1, h:y1-y0+1 });
+    }
+  }
+  return blobs;
+}
+
+// Export TTF
+function exportFont() {
+  const toExport = glyphs.filter(g => g.ch);
+  if (!toExport.length) { alert('Assigne au moins une lettre avant d\'exporter !'); return; }
+  const name = (document.getElementById('fname').value || 'MaPolice').trim();
+  const thr  = parseInt(document.getElementById('thrSlider').value);
+
+  function doExport() {
+    try {
+      const UPM=1000, ASC=800, DESC=-200, HW=14;
+      const notdef = new opentype.Glyph({ name:'.notdef', unicode:0, advanceWidth:400, path:new opentype.Path() });
+      const gs = [notdef];
+      toExport.forEach(g => {
+        const id  = g.canvas.getContext('2d').getImageData(0,0,g.canvas.width,g.canvas.height);
+        const bin = binarize(id, thr);
+        const sX  = UPM / g.canvas.width;
+        const sY  = (ASC - DESC) / g.canvas.height;
+        const path = new opentype.Path();
+        for (let py = 0; py < g.canvas.height; py++) {
+          for (let px = 0; px < g.canvas.width; px++) {
+            if (!bin[py * g.canvas.width + px]) continue;
+            const fx = Math.round(px * sX);
+            const fy = Math.round(ASC - py * sY);
+            path.moveTo(fx-HW, fy-HW); path.lineTo(fx+HW, fy-HW);
+            path.lineTo(fx+HW, fy+HW); path.lineTo(fx-HW, fy+HW);
+            path.close();
+          }
+        }
+        gs.push(new opentype.Glyph({
+          name: 'g' + g.ch.charCodeAt(0),
+          unicode: g.ch.charCodeAt(0),
+          advanceWidth: Math.max(260, Math.round(g.canvas.width * sX * 1.1)),
+          path
+        }));
+      });
+      const font = new opentype.Font({ familyName:name, styleName:'Regular', unitsPerEm:UPM, ascender:ASC, descender:DESC, glyphs:gs });
+      const buf  = font.arrayBuffer();
+      const blob = new Blob([buf], { type:'font/ttf' });
+      const url  = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href=url; a.download=name+'.ttf';
+      document.body.appendChild(a); a.click();
+      setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
+    } catch(e) { alert('Erreur lors de l\'export : ' + e.message); }
+  }
+
+  if (typeof opentype !== 'undefined') {
+    doExport();
+  } else {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/opentype.js/1.3.4/opentype.min.js';
+    s.onload = doExport;
+    s.onerror = () => alert('Impossible de charger opentype.js. Vérifie ta connexion internet.');
+    document.head.appendChild(s);
+  }
+}
+
+// ================================================================
+// PAGE 3 — ÉCRIRE
+// ================================================================
+let wFont = 'Georgia, serif';
+let writeInited = false;
+
+function initWrite() {
+  const wrap   = document.getElementById('writeWrap');
+  const canvas = document.getElementById('writeCanvas');
+  const ta     = document.getElementById('writeTA');
+
+  const W = wrap.clientWidth || Math.min(620, window.innerWidth - 32);
+  canvas.width  = W;
+  canvas.height = 320;
+  ta.style.width  = W + 'px';
+  ta.style.height = '320px';
+
+  if (!writeInited) {
+    // Tap on wrap → focus textarea
+    wrap.addEventListener('click', () => ta.focus());
+    ta.addEventListener('input', onTextInput);
+    writeInited = true;
+  }
+  renderWrite();
+}
+
+function onTextInput() {
+  renderWrite();
+}
+
+function loadTTF(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const fontName = 'UF' + Date.now();
+    const face = new FontFace(fontName, e.target.result);
+    face.load()
+      .then(f => {
+        document.fonts.add(f);
+        wFont = fontName;
+        document.getElementById('loadFontBox').innerHTML =
+          '<span class="ico">✅</span><p style="color:#3DAA52;font-weight:700">Police chargée avec succès !</p>';
+        renderWrite();
+      })
+      .catch(err => alert('Erreur de chargement : ' + err));
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function renderWrite() {
+  const canvas = document.getElementById('writeCanvas');
+  if (!canvas || !canvas.width) return;
+  const ctx = canvas.getContext('2d');
+  const ta  = document.getElementById('writeTA');
+  const sz  = parseInt(document.getElementById('wSz').value) || 28;
+  const col = document.getElementById('wCol').value || '#1c1814';
+
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Ruled lines
+  const lh = sz * 1.6;
+  ctx.strokeStyle = 'rgba(0,0,0,0.07)';
+  ctx.lineWidth = 1;
+  for (let y = lh; y < canvas.height; y += lh) {
+    ctx.beginPath(); ctx.moveTo(14, y); ctx.lineTo(canvas.width - 14, y); ctx.stroke();
+  }
+
+  ctx.font = sz + 'px ' + wFont;
+  ctx.fillStyle = col;
+  ctx.textBaseline = 'alphabetic';
+
+  const lines = (ta ? ta.value : '').split('\n');
+  lines.forEach((line, li) => {
+    ctx.fillText(line, 18, sz + li * lh);
+  });
+}
+
+function clearWrite() {
+  const ta = document.getElementById('writeTA');
+  if (ta) ta.value = '';
+  renderWrite();
+}
+
+function saveWritePNG() {
+  const canvas = document.getElementById('writeCanvas');
+  if (!canvas) return;
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'texte-manuscrit.png';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
+  }, 'image/png');
+}
+
+document.getElementById('wSz').addEventListener('input', renderWrite);
+document.getElementById('wCol').addEventListener('input', renderWrite);
+
+// ================================================================
+// PAGE 4 — PDF / IMAGE ANNOTATION
+// ================================================================
+let pdfDoc    = null;
+let pdfPage   = 1;
+let pdfAnnots = [];  // {x,y,text,sz,col,font,page}
+let pdfCursor = { x: 40, y: 60 };
+let pdfListenersAdded = false;
+
+function initPDFListeners() {
+  if (pdfListenersAdded) return;
+  pdfListenersAdded = true;
+  // Nothing else needed — click handler is inline
+}
+
+function handlePDF(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+
+  function doLoad() {
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+      'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    file.arrayBuffer().then(buf => {
+      return pdfjsLib.getDocument({ data: buf }).promise;
+    }).then(doc => {
+      pdfDoc = doc; pdfPage = 1; pdfAnnots = [];
+      showPDFSection();
+      renderPDFPage();
+    }).catch(e => {
+      alert('Erreur PDF : ' + e.message + '\n\nEssaie d\'importer une image (PNG/JPG) de ta page.');
+    });
+  }
+
+  if (typeof pdfjsLib !== 'undefined') {
+    doLoad();
+  } else {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload = doLoad;
+    s.onerror = () => alert('Impossible de charger PDF.js. Utilise une image PNG/JPG à la place.');
+    document.head.appendChild(s);
+  }
+}
+
+function handlePageImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+  const reader = new FileReader();
+  reader.onload = e => {
+    const img = new Image();
+    img.onload = () => {
+      pdfDoc = null; pdfPage = 1; pdfAnnots = [];
+      showPDFSection();
+      const base = document.getElementById('pdfBase');
+      const maxW = Math.min(620, window.innerWidth - 32);
+      const sc = Math.min(1, maxW / img.width);
+      base.width  = Math.round(img.width  * sc);
+      base.height = Math.round(img.height * sc);
+      base.getContext('2d').drawImage(img, 0, 0, base.width, base.height);
+      syncDrawCanvas();
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function showPDFSection() {
+  document.getElementById('pdfUpload').style.display = 'none';
+  document.getElementById('pdfSec').style.display = 'block';
+}
+
+async function renderPDFPage() {
+  if (!pdfDoc) return;
+  const page = await pdfDoc.getPage(pdfPage);
+  const maxW = Math.min(620, window.innerWidth - 32);
+  const vp0  = page.getViewport({ scale: 1 });
+  const sc   = maxW / vp0.width;
+  const vp   = page.getViewport({ scale: sc });
+  const base = document.getElementById('pdfBase');
+  base.width = vp.width; base.height = vp.height;
+  await page.render({ canvasContext: base.getContext('2d'), viewport: vp }).promise;
+  syncDrawCanvas();
+  document.getElementById('pginfo').textContent = 'Page ' + pdfPage + ' / ' + pdfDoc.numPages;
+  if (pdfDoc.numPages > 1) document.getElementById('pgNav').style.display = 'flex';
+  redrawAnnotations();
+}
+
+function syncDrawCanvas() {
+  const base = document.getElementById('pdfBase');
+  const draw = document.getElementById('pdfDraw');
+  draw.width  = base.width;
+  draw.height = base.height;
+}
+
+function onPDFClick(e) {
+  const draw = document.getElementById('pdfDraw');
+  const rect = draw.getBoundingClientRect();
+  const scX  = draw.width  / rect.width;
+  const scY  = draw.height / rect.height;
+  pdfCursor = {
+    x: Math.round((e.clientX - rect.left) * scX),
+    y: Math.round((e.clientY - rect.top)  * scY)
+  };
+  document.getElementById('curHint').textContent = '✅ Curseur placé — tape ton texte ci-dessous';
+  document.getElementById('annotInput').focus();
+  redrawAnnotations();
+}
+
+function addAnnotation() {
+  const input = document.getElementById('annotInput');
+  const text  = input.value.trim();
+  if (!text) return;
+  const sz  = parseInt(document.getElementById('pSz').value) || 20;
+  const col = document.getElementById('pCol').value || '#1c1814';
+  pdfAnnots.push({ x: pdfCursor.x, y: pdfCursor.y, text, sz, col, font: wFont, page: pdfPage });
+  pdfCursor.y += Math.round(sz * 1.5); // Move down for next line
+  input.value = '';
+  redrawAnnotations();
+}
+
+function redrawAnnotations() {
+  const draw = document.getElementById('pdfDraw');
+  if (!draw || !draw.width) return;
+  const ctx = draw.getContext('2d');
+  ctx.clearRect(0, 0, draw.width, draw.height);
+  pdfAnnots.filter(a => a.page === pdfPage).forEach(a => {
+    ctx.font = a.sz + 'px ' + (a.font || wFont);
+    ctx.fillStyle = a.col;
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(a.text, a.x, a.y);
+  });
+  // Draw cursor marker
+  const sz = parseInt(document.getElementById('pSz').value) || 20;
+  ctx.strokeStyle = 'rgba(192,90,32,0.6)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([4, 3]);
+  ctx.strokeRect(pdfCursor.x, pdfCursor.y - sz, sz * 0.7, sz + 4);
+  ctx.setLineDash([]);
+}
+
+function undoAnnot() {
+  if (pdfAnnots.length > 0) {
+    pdfAnnots.pop();
+    redrawAnnotations();
+  }
+}
+
+async function changePage(dir) {
+  if (!pdfDoc) return;
+  const n = pdfPage + dir;
+  if (n < 1 || n > pdfDoc.numPages) return;
+  pdfPage = n;
+  await renderPDFPage();
+}
+
+function savePDF() {
+  const base = document.getElementById('pdfBase');
+  const draw = document.getElementById('pdfDraw');
+  if (!base || !base.width) { alert('Aucune page chargée.'); return; }
+  // Merge base + draw, hide cursor rectangle
+  const merged = document.createElement('canvas');
+  merged.width  = base.width;
+  merged.height = base.height;
+  const mCtx = merged.getContext('2d');
+  mCtx.drawImage(base, 0, 0);
+  // Redraw annotations only (no cursor) on merged canvas
+  pdfAnnots.filter(a => a.page === pdfPage).forEach(a => {
+    mCtx.font = a.sz + 'px ' + (a.font || wFont);
+    mCtx.fillStyle = a.col;
+    mCtx.textBaseline = 'alphabetic';
+    mCtx.fillText(a.text, a.x, a.y);
+  });
+  merged.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'evaluation-annotee-p' + pdfPage + '.png';
+    document.body.appendChild(a); a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 2000);
+  }, 'image/png');
+}
+
+function resetPDF() {
+  pdfDoc = null; pdfPage = 1; pdfAnnots = [];
+  pdfCursor = { x:40, y:60 };
+  document.getElementById('pdfSec').style.display = 'none';
+  document.getElementById('pdfUpload').style.display = 'block';
+  document.getElementById('pgNav').style.display = 'none';
+  document.getElementById('curHint').textContent = '👆 Appuie sur la page pour placer le curseur';
+  const base = document.getElementById('pdfBase');
+  const draw = document.getElementById('pdfDraw');
+  base.width = 0; draw.width = 0;
+}
+</script>
+</body>
+</html>
