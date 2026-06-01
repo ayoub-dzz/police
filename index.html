@@ -504,7 +504,6 @@ const ALL_CHARS = GROUPS.flatMap(g => g.chars.split(''));
 })();
 
 function dlTemplate() {
-  // A4 at 150dpi: 1240 x 1754
   const W = 1240, H = 1754;
   const tc = document.createElement('canvas');
   tc.width = W; tc.height = H;
@@ -512,50 +511,45 @@ function dlTemplate() {
   c.fillStyle = '#fff';
   c.fillRect(0, 0, W, H);
 
-  // Title
   c.fillStyle = '#111';
-  c.font = 'bold 36px serif';
-  c.fillText('Ma Police Manuscrite — Modèle', 40, 60);
-  c.fillStyle = '#555';
-  c.font = '18px monospace';
-  c.fillText('Écris chaque lettre dans sa case · Ligne rouge = ligne de base · Photo sur fond blanc', 40, 90);
+  c.font = 'bold 38px serif';
+  c.fillText('Ma Police Manuscrite — Modele', 40, 62);
+  c.fillStyle = '#444';
+  c.font = '20px sans-serif';
+  c.fillText('Ecris une lettre dans chaque case  ·  Ligne rouge = ligne de base', 40, 96);
+  c.strokeStyle = '#bbb'; c.lineWidth = 1.5;
+  c.beginPath(); c.moveTo(40, 112); c.lineTo(W-40, 112); c.stroke();
 
-  // Separator line
-  c.strokeStyle = '#ccc'; c.lineWidth = 1;
-  c.beginPath(); c.moveTo(40, 104); c.lineTo(W - 40, 104); c.stroke();
-
-  // Cell dimensions — big enough to write in comfortably
-  const cW = 42, cH = 62, gap = 5;
-  let sY = 120;
+  const cW = 80, cH = 110, gap = 8, perRow = 13, marginL = 40;
+  let sY = 126;
 
   GROUPS.forEach(g => {
-    // Section label
-    c.fillStyle = '#333';
-    c.font = 'bold 16px sans-serif';
-    c.fillText(g.name.toUpperCase(), 40, sY + 14);
-    sY += 22;
+    c.fillStyle = '#111';
+    c.font = 'bold 22px sans-serif';
+    c.fillText(g.name, marginL, sY + 20);
+    sY += 30;
 
-    g.chars.split('').forEach((ch, xi) => {
-      const x = 40 + xi * (cW + gap);
-
-      // Cell border — dark and visible
-      c.strokeStyle = '#888'; c.lineWidth = 1.2;
-      c.strokeRect(x, sY, cW, cH);
-
-      // Baseline — red, clearly visible
-      c.strokeStyle = '#CC3300'; c.lineWidth = 1.5;
-      c.beginPath();
-      c.moveTo(x, sY + cH * 0.73);
-      c.lineTo(x + cW, sY + cH * 0.73);
-      c.stroke();
-
-      // Letter label inside cell — bottom right, dark
-      c.fillStyle = '#444';
-      c.font = 'bold 11px monospace';
-      c.fillText(ch, x + cW - 14, sY + cH - 4);
-    });
-
-    sY += cH + 28;
+    const chars = g.chars.split('');
+    for (let row = 0; row < Math.ceil(chars.length / perRow); row++) {
+      const rowChars = chars.slice(row * perRow, (row + 1) * perRow);
+      rowChars.forEach((ch, xi) => {
+        const x = marginL + xi * (cW + gap);
+        c.fillStyle = '#FAFAFA';
+        c.fillRect(x, sY, cW, cH);
+        c.strokeStyle = '#333'; c.lineWidth = 1.8;
+        c.strokeRect(x, sY, cW, cH);
+        c.strokeStyle = '#CC0000'; c.lineWidth = 2;
+        c.beginPath();
+        c.moveTo(x + 4, sY + cH * 0.74);
+        c.lineTo(x + cW - 4, sY + cH * 0.74);
+        c.stroke();
+        c.fillStyle = '#555';
+        c.font = 'bold 16px monospace';
+        c.fillText(ch, x + cW - 18, sY + cH - 5);
+      });
+      sY += cH + 10;
+    }
+    sY += 20;
   });
 
   tc.toBlob(blob => {
