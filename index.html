@@ -504,37 +504,58 @@ const ALL_CHARS = GROUPS.flatMap(g => g.chars.split(''));
 })();
 
 function dlTemplate() {
-  const W = 794, H = 1080;
+  // A4 at 150dpi: 1240 x 1754
+  const W = 1240, H = 1754;
   const tc = document.createElement('canvas');
   tc.width = W; tc.height = H;
   const c = tc.getContext('2d');
   c.fillStyle = '#fff';
   c.fillRect(0, 0, W, H);
 
-  c.fillStyle = '#222';
-  c.font = 'bold 17px serif';
-  c.fillText('Ma Police Manuscrite — Modèle', 30, 38);
-  c.fillStyle = '#aaa';
-  c.font = '9px monospace';
-  c.fillText('Écris une lettre dans chaque case · Ligne rouge = ligne de base · Photographier sur fond blanc', 30, 54);
+  // Title
+  c.fillStyle = '#111';
+  c.font = 'bold 36px serif';
+  c.fillText('Ma Police Manuscrite — Modèle', 40, 60);
+  c.fillStyle = '#555';
+  c.font = '18px monospace';
+  c.fillText('Écris chaque lettre dans sa case · Ligne rouge = ligne de base · Photo sur fond blanc', 40, 90);
 
-  const cW = 27, cH = 40;
-  let sY = 68;
+  // Separator line
+  c.strokeStyle = '#ccc'; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(40, 104); c.lineTo(W - 40, 104); c.stroke();
+
+  // Cell dimensions — big enough to write in comfortably
+  const cW = 42, cH = 62, gap = 5;
+  let sY = 120;
+
   GROUPS.forEach(g => {
-    c.fillStyle = '#bbb';
-    c.font = '9px sans-serif';
-    c.fillText(g.name, 30, sY + 10);
-    sY += 16;
+    // Section label
+    c.fillStyle = '#333';
+    c.font = 'bold 16px sans-serif';
+    c.fillText(g.name.toUpperCase(), 40, sY + 14);
+    sY += 22;
+
     g.chars.split('').forEach((ch, xi) => {
-      const x = 30 + xi * (cW + 4);
-      c.strokeStyle = '#ddd'; c.lineWidth = 0.8;
+      const x = 40 + xi * (cW + gap);
+
+      // Cell border — dark and visible
+      c.strokeStyle = '#888'; c.lineWidth = 1.2;
       c.strokeRect(x, sY, cW, cH);
-      c.strokeStyle = 'rgba(192,90,32,0.4)'; c.lineWidth = 1.2;
-      c.beginPath(); c.moveTo(x, sY + cH * 0.72); c.lineTo(x + cW, sY + cH * 0.72); c.stroke();
-      c.fillStyle = '#ccc'; c.font = '7px monospace';
-      c.fillText(ch, x + cW - 9, sY + cH - 2);
+
+      // Baseline — red, clearly visible
+      c.strokeStyle = '#CC3300'; c.lineWidth = 1.5;
+      c.beginPath();
+      c.moveTo(x, sY + cH * 0.73);
+      c.lineTo(x + cW, sY + cH * 0.73);
+      c.stroke();
+
+      // Letter label inside cell — bottom right, dark
+      c.fillStyle = '#444';
+      c.font = 'bold 11px monospace';
+      c.fillText(ch, x + cW - 14, sY + cH - 4);
     });
-    sY += cH + 20;
+
+    sY += cH + 28;
   });
 
   tc.toBlob(blob => {
